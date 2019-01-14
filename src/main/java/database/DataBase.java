@@ -14,14 +14,12 @@ import java.util.Properties;
 
 public class DataBase {
 
-    private static final String PATH_TO_PROPERTIES = "src/main/resources/config.properties";
-
     public void connect(String date) {
-        FileInputStream fileInputStream;
-        Properties prop = new Properties();
-
+        String path = getClass().getProtectionDomain().getCodeSource().getLocation().toString().substring(6);
         try {
-            fileInputStream = new FileInputStream(PATH_TO_PROPERTIES);
+            FileInputStream fileInputStream = new java.io.FileInputStream
+                    (new java.io.File(path + "/config.properties"));
+            Properties prop = new Properties();
             prop.load(fileInputStream);
 
             String driver = prop.getProperty("Driver");
