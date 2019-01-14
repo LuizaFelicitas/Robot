@@ -14,6 +14,8 @@ import java.util.Properties;
 
 public class DataBase {
 
+    private String table;
+
     public void connect(String date) {
         String path = getClass().getProtectionDomain().getCodeSource().getLocation().toString().substring(6);
         try {
@@ -26,6 +28,7 @@ public class DataBase {
             String url = prop.getProperty("url");
             String login = prop.getProperty("login");
             String password = prop.getProperty("password");
+            table = prop.getProperty("table");
 
             Class.forName(driver);
             try (Connection connection = DriverManager.getConnection(url, login, password)) {
@@ -42,7 +45,7 @@ public class DataBase {
     private synchronized Map<Integer, String> query(Connection connection, String date) {
         Map<Integer, String> id_url = new HashMap<>();
         try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM templ WHERE date >= '" + formatDate(date) + "' AND status IS NULL;");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + table + " WHERE date >= '" + formatDate(date) + "' AND status IS NULL;");
             while (resultSet.next()) {
                 id_url.put(resultSet.getInt("id"), resultSet.getString("url"));
             }
@@ -59,7 +62,7 @@ public class DataBase {
             ) {
                 int status = (int) entry.getValue();
                 int id = (int) entry.getKey();
-                statement.execute("UPDATE templ SET status = " + status + " WHERE id = " + id + ";");
+                statement.execute("UPDATE " + table + " SET status = " + status + " WHERE id = " + id + ";");
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
